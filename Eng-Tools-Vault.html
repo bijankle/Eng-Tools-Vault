@@ -56,7 +56,7 @@
     border:none;background:none;width:100%;text-align:left;font-family:inherit;position:relative;
   }
   .channel .hash{color:#B5BAC1;font-weight:700;}
-  .channel .ico{font-size:15px;line-height:1;width:18px;text-align:center;}
+  .channel .ico{font-size:15px;line-height:1;width:18px;text-align:center;filter:grayscale(1);opacity:.75;}
   .channel:hover{background:var(--hover);color:var(--text);}
   .channel:hover .hash{color:#9A9DA5;}
   .channel.active{background:var(--tint);color:var(--accent-deep);font-weight:600;}
@@ -84,7 +84,7 @@
     display:flex;align-items:center;gap:12px;padding:14px 24px;
     border-bottom:1px solid var(--line);flex:none;min-height:62px;
   }
-  .toolbar .t-ico{font-size:18px;}
+  .toolbar .t-ico{font-size:18px;filter:grayscale(1);opacity:.75;}
   .toolbar .t-hash{color:#B5BAC1;font-weight:700;font-size:18px;}
   .toolbar .t-name{font-weight:700;font-size:17px;color:var(--head);}
   .toolbar .t-desc{font-size:13px;color:var(--muted);border-left:1px solid var(--line);padding-left:12px;margin-left:2px;}
@@ -221,45 +221,56 @@ const OWNER = "bijankle";
    the repo already has an index.html. */
 const APPS = [
   {
-    slug:"pump-curve", repo:"Pump-Curve", name:"Pump Curve", ico:"📈",
-    group:"Pumps & Hydraulics",
-    desc:"Plot and read pump performance curves.",
-  },
-  {
-    slug:"slurry-pump-calc", repo:"Slurry-Pump-Calc", name:"Slurry Pump Calc", ico:"🧮",
-    group:"Pumps & Hydraulics",
-    desc:"Build company-standard slurry pump calcs with working formulas and summary tables.",
-    file:"index.html",
-  },
-  {
-    slug:"pipe-router", repo:"Pipe-Router", name:"Pipe Router", ico:"🧭",
-    group:"Pumps & Hydraulics",
-    desc:"Route and size pipe runs.",
-  },
-  {
-    slug:"pid-checker", repo:"PID-Checker", name:"P&ID Checker", ico:"📐",
-    group:"Drawings & P&ID",
-    desc:"Check a P&ID PDF against mechanical and piping lists.",
-  },
-  {
     slug:"photo-map", repo:"Photo-Map", name:"Photo Map", ico:"🗺️",
-    group:"Drawings & P&ID",
+    group:"Databases",
     desc:"Place site photos on a map.",
   },
   {
-    slug:"pdf-canvas", repo:"PDF-Canvas", name:"PDF Canvas", ico:"📄",
-    group:"Documents & Data",
+    slug:"pdf-canvas", repo:"PDF-Canvas", name:"PDF Canvas", ico:"✏️",
+    group:"Sketches",
     desc:"Mark up and work over PDF drawings on a canvas.",
   },
   {
     slug:"data-extractor", repo:"Data-Extractor", name:"Data Extractor", ico:"🪣",
-    group:"Documents & Data",
+    group:"Data Analysis",
     desc:"Extract specific text and images into pre-set buckets.",
   },
   {
     slug:"doc-compare", repo:"Doc-Compare", name:"Doc Compare", ico:"🔍",
-    group:"Documents & Data",
+    group:"Data Analysis",
     desc:"Compare two documents and highlight the differences.",
+  },
+  {
+    slug:"pid-checker", repo:"PID-Checker", name:"P&ID Checker", ico:"📐",
+    group:"Data Analysis",
+    desc:"Check a P&ID PDF against mechanical and piping lists.",
+  },
+  {
+    slug:"pipe-sizer", repo:"Pipe-Sizer", name:"Pipe Sizer", ico:"📏",
+    group:"Piping",
+    desc:"Size pipe runs for flow, velocity, and pressure drop.",
+    file:"pipe-sizer.html",
+  },
+  {
+    slug:"control-valve-sizer", repo:"Control-Valve-Sizer", name:"Control Valve Sizer", ico:"🎛️",
+    group:"Piping",
+    desc:"Size control valves and check Cv across operating cases.",
+  },
+  {
+    slug:"slurry-pump-calc", repo:"Slurry-Pump-Calc", name:"Slurry Pump Calc", ico:"🧮",
+    group:"Pumping",
+    desc:"Build company-standard slurry pump calcs with working formulas and summary tables.",
+    file:"index.html",
+  },
+  {
+    slug:"pump-curve", repo:"Pump-Curve", name:"Pump Curve", ico:"📈",
+    group:"Pumping",
+    desc:"Plot and read pump performance curves.",
+  },
+  {
+    slug:"pipe-router", repo:"Pipe-Router", name:"Pipe Router", ico:"🧭",
+    group:"Pumping",
+    desc:"Route and size pipe runs.",
   },
 ];
 // Default each tool's entry file to "<Repo>.html" unless explicitly overridden.
@@ -318,31 +329,17 @@ function renderHome(){
   stage.innerHTML = "";
   const home = document.createElement("div");
   home.className = "home";
-  const cards = APPS.map(a => `
-    <button class="card" data-slug="${a.slug}">
-      <div class="card-top">
-        <div class="c-ico">${a.ico}</div>
-        <div>
-          <div class="c-name">${a.name}</div>
-          <div class="c-slug">#${a.slug}</div>
-        </div>
-      </div>
-      <div class="c-desc">${a.desc}</div>
-      <div class="card-foot">
-        <span class="open">Open ↗</span>
-      </div>
-    </button>`).join("");
+  // No tool cards here — the sidebar already lists every tool; duplicating it
+  // on the home screen is redundant. This view only shows on a first-ever visit
+  // (afterwards the last-opened tool is restored automatically).
   home.innerHTML = `
     <div class="home-inner">
       <div class="eyebrow"><span class="d"></span>Engineering toolkit</div>
       <h1>One vault, every tool.</h1>
-      <p class="lede">A single home for your engineering apps. Each tool lives in its own GitHub repo and updates the moment you push to its <strong>main</strong> branch — pick one below to open it right here, no tab-juggling.</p>
-      <div class="grid">${cards}</div>
-      <div class="home-foot">Eng Tools Vault · ${APPS.length} tools · Blurprint theme, tuned for white backgrounds.</div>
+      <p class="lede">Pick a tool from the sidebar to open it right here. Whatever you open last is restored automatically next time you visit.</p>
+      <div class="home-foot">Eng Tools Vault · ${APPS.length} tools</div>
     </div>`;
   stage.appendChild(home);
-  home.querySelectorAll(".card").forEach(c =>
-    c.addEventListener("click", () => { location.hash = "#" + c.dataset.slug; }));
 }
 
 function renderApp(app){
@@ -369,13 +366,23 @@ function setActive(slug){
   document.querySelectorAll(".channel").forEach(c =>
     c.classList.toggle("active", c.dataset.slug === slug));
 }
+const LAST_KEY = "etv:lastSlug";
 function route(){
-  const slug = location.hash.replace(/^#/, "");
+  let slug = location.hash.replace(/^#/, "");
+  // With no explicit hash (e.g. opening the bare URL), restore the tool from
+  // the last session so the .html "homepage" is wherever you left off.
+  if(!slug){
+    const last = localStorage.getItem(LAST_KEY);
+    if(last && BY_SLUG[last]) slug = last;
+  }
   const app = BY_SLUG[slug];
   if(app){
+    // Reflect a restored view in the URL without firing another route().
+    if(location.hash.replace(/^#/, "") !== slug) history.replaceState(null, "", "#" + slug);
     setActive(slug);
     renderToolbar(app);
     renderApp(app);
+    localStorage.setItem(LAST_KEY, slug);
     document.title = app.name + " · Eng Tools Vault";
   } else {
     setActive(null);
