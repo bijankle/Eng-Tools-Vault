@@ -184,7 +184,6 @@
       <div class="logo">E</div>
       <div>
         <div class="name">Eng Tools Vault</div>
-        <div class="sub">Engineering toolkit</div>
       </div>
       <button class="menu-btn" id="menuBtn" aria-label="Toggle menu" type="button">≡</button>
     </a>
@@ -281,22 +280,23 @@ const BY_SLUG = Object.fromEntries(APPS.map(a => [a.slug, a]));
 
 /* ---------- Sidebar ---------- */
 const navEl = document.getElementById("nav");
+const byName = (a, b) => a.name.localeCompare(b.name, undefined, {sensitivity:"base"});
 function buildNav(){
-  const groups = [];
   const seen = {};
-  APPS.forEach(a => { if(!seen[a.group]){seen[a.group]=[];groups.push(a.group);} seen[a.group].push(a); });
+  APPS.forEach(a => { (seen[a.group] || (seen[a.group] = [])).push(a); });
   navEl.innerHTML = "";
-  groups.forEach(g => {
+  // Headers in alphabetical order, tools alphabetical within each header.
+  Object.keys(seen).sort((a, b) => a.localeCompare(b, undefined, {sensitivity:"base"})).forEach(g => {
     const label = document.createElement("div");
     label.className = "group-label";
     label.textContent = g;
     navEl.appendChild(label);
-    seen[g].forEach(a => {
+    seen[g].sort(byName).forEach(a => {
       const link = document.createElement("a");
       link.className = "channel";
       link.href = "#" + a.slug;
       link.dataset.slug = a.slug;
-      link.innerHTML = `<span class="ico">${a.ico}</span><span class="hash">#</span>${a.slug}`;
+      link.innerHTML = `<span class="hash">#</span>${a.name}`;
       navEl.appendChild(link);
     });
   });
@@ -306,14 +306,10 @@ function buildNav(){
 const toolbar = document.getElementById("toolbar");
 function renderToolbar(app){
   if(!app){
-    toolbar.innerHTML = `
-      <span class="t-ico">🗂️</span>
-      <span class="t-name">Home</span>
-      <span class="t-desc">Pick a tool from the sidebar to open it here.</span>`;
+    toolbar.innerHTML = "";
     return;
   }
   toolbar.innerHTML = `
-    <span class="t-ico">${app.ico}</span>
     <span class="t-hash">#</span>
     <span class="t-name">${app.name}</span>
     <span class="t-desc">${app.desc}</span>
@@ -326,20 +322,9 @@ function renderToolbar(app){
 /* ---------- Stage ---------- */
 const stage = document.getElementById("stage");
 function renderHome(){
+  // Blank stage — the sidebar is the only navigation. This shows only on a
+  // first-ever visit; afterwards the last-opened tool is restored.
   stage.innerHTML = "";
-  const home = document.createElement("div");
-  home.className = "home";
-  // No tool cards here — the sidebar already lists every tool; duplicating it
-  // on the home screen is redundant. This view only shows on a first-ever visit
-  // (afterwards the last-opened tool is restored automatically).
-  home.innerHTML = `
-    <div class="home-inner">
-      <div class="eyebrow"><span class="d"></span>Engineering toolkit</div>
-      <h1>One vault, every tool.</h1>
-      <p class="lede">Pick a tool from the sidebar to open it right here. Whatever you open last is restored automatically next time you visit.</p>
-      <div class="home-foot">Eng Tools Vault · ${APPS.length} tools</div>
-    </div>`;
-  stage.appendChild(home);
 }
 
 function renderApp(app){
