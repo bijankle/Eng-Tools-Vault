@@ -199,11 +199,8 @@
 
   <!-- ===== MAIN ===== -->
   <main class="main">
-    <div class="toolbar" id="toolbar">
-      <!-- toolbar content injected by JS -->
-    </div>
     <div class="stage" id="stage">
-      <!-- home injected by JS; iframe created on demand -->
+      <!-- iframe created on demand; each embedded tool has its own header -->
     </div>
   </main>
 </div>
@@ -302,23 +299,6 @@ function buildNav(){
   });
 }
 
-/* ---------- Toolbar ---------- */
-const toolbar = document.getElementById("toolbar");
-function renderToolbar(app){
-  if(!app){
-    toolbar.innerHTML = "";
-    return;
-  }
-  toolbar.innerHTML = `
-    <span class="t-hash">#</span>
-    <span class="t-name">${app.name}</span>
-    <span class="t-desc">${app.desc}</span>
-    <span class="spacer"></span>
-    <span class="pill live"><span class="d"></span>Live</span>
-    <a class="tbtn" href="${app.repoUrl}" target="_blank" rel="noopener">Repo ↗</a>
-    <a class="tbtn primary" href="${app.pages}" target="_blank" rel="noopener">Open full ↗</a>`;
-}
-
 /* ---------- Stage ---------- */
 const stage = document.getElementById("stage");
 function renderHome(){
@@ -365,13 +345,11 @@ function route(){
     // Reflect a restored view in the URL without firing another route().
     if(location.hash.replace(/^#/, "") !== slug) history.replaceState(null, "", "#" + slug);
     setActive(slug);
-    renderToolbar(app);
     renderApp(app);
     localStorage.setItem(LAST_KEY, slug);
     document.title = app.name + " · Eng Tools Vault";
   } else {
     setActive(null);
-    renderToolbar(null);
     renderHome();
     document.title = "Eng Tools Vault";
   }
