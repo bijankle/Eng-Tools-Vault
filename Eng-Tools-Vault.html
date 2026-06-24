@@ -215,6 +215,10 @@
    pages: the GitHub Pages URL (https://bijankle.github.io/<Repo>/)
    ============================================================ */
 const OWNER = "bijankle";
+/* `file` = the HTML entry file inside each repo. GitHub Pages only serves a
+   bare directory URL when an index.html exists at the root; these repos ship a
+   single <Repo>.html instead, so we point straight at it. Override per app when
+   the repo already has an index.html. */
 const APPS = [
   {
     slug:"pump-curve", repo:"Pump-Curve", name:"Pump Curve", ico:"📈",
@@ -225,6 +229,7 @@ const APPS = [
     slug:"slurry-pump-calc", repo:"Slurry-Pump-Calc", name:"Slurry Pump Calc", ico:"🧮",
     group:"Pumps & Hydraulics",
     desc:"Build company-standard slurry pump calcs with working formulas and summary tables.",
+    file:"index.html",
   },
   {
     slug:"pipe-router", repo:"Pipe-Router", name:"Pipe Router", ico:"🧭",
@@ -257,7 +262,9 @@ const APPS = [
     desc:"Compare two documents and highlight the differences.",
   },
 ];
-APPS.forEach(a => a.pages = `https://${OWNER}.github.io/${a.repo}/`);
+// Default each tool's entry file to "<Repo>.html" unless explicitly overridden.
+APPS.forEach(a => { if(!a.file) a.file = `${a.repo}.html`; });
+APPS.forEach(a => a.pages = `https://${OWNER}.github.io/${a.repo}/${a.file}`);
 APPS.forEach(a => a.repoUrl = `https://github.com/${OWNER}/${a.repo}`);
 const BY_SLUG = Object.fromEntries(APPS.map(a => [a.slug, a]));
 
@@ -348,7 +355,7 @@ function renderApp(app){
   stage.appendChild(frame);
   const hint = document.createElement("div");
   hint.className = "frame-hint";
-  hint.innerHTML = `Blank screen? Enable GitHub Pages for <strong>${app.repo}</strong>, or <a href="${app.pages}" target="_blank" rel="noopener">open it directly ↗</a>.`;
+  hint.innerHTML = `404 or blank? Turn on GitHub Pages for <strong>${app.repo}</strong> (Settings → Pages → deploy from its branch), or <a href="${app.pages}" target="_blank" rel="noopener">open it directly ↗</a>.`;
   stage.appendChild(hint);
   // Hide the hint once the frame loads something successfully.
   frame.addEventListener("load", () => { hint.style.display = "none"; });
