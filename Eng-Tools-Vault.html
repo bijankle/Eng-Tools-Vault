@@ -349,7 +349,10 @@ function renderApp(app){
   stage.innerHTML = "";
   const frame = document.createElement("iframe");
   frame.className = "frame";
-  frame.src = app.pages;
+  // Cache-buster: GitHub's CDN and the browser aggressively cache the 404 a
+  // tool URL returns before its Pages build finishes. A per-load query param
+  // gives each visit a fresh cache key so a stale 404 can never stick.
+  frame.src = app.pages + (app.pages.includes("?") ? "&" : "?") + "_=" + Date.now();
   frame.title = app.name;
   frame.loading = "eager";
   stage.appendChild(frame);
