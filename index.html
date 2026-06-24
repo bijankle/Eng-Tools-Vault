@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eng Tools Vault</title>
+<meta name="description" content="A hub for engineering tools — Discord-inspired, print-friendly Blurprint theme.">
+<style>
+  :root{
+    /* Blurprint tokens */
+    --bg:#ffffff; --panel:#ffffff;
+    --line:#E3E5E8; --line-soft:#F2F3F5; --hover:#F2F3F5;
+    --accent:#5865F2; --accent-deep:#4752C4; --tint:#EEF0FE; --tint-line:#E0E3FB;
+    --text:#2E3035; --head:#1E1F22; --body:#4E5058; --muted:#80848E; --muted2:#5C5E66; --label:#9A9DA5;
+    --green:#3BA55C; --yellow:#E0A416; --red:#D83C3E; --offline:#B5BAC1;
+    --sidebar-w:264px;
+    --font:'Aptos','Segoe UI Variable Text','Segoe UI',system-ui,-apple-system,sans-serif;
+    --mono:'Aptos Mono','Cascadia Code',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    background:var(--bg); color:var(--text); font-family:var(--font);
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:#D9DDFB;}
+  a{color:inherit;}
+
+  .app{display:flex;min-height:100vh;height:100vh;background:var(--bg);}
+
+  /* ===== SIDEBAR ===== */
+  .sidebar{
+    width:var(--sidebar-w);flex:none;display:flex;flex-direction:column;
+    background:var(--panel);border-right:1px solid var(--line);height:100vh;
+  }
+  .brand{
+    display:flex;align-items:center;gap:12px;padding:18px 16px;
+    border-bottom:1px solid var(--line);text-decoration:none;
+  }
+  .brand .logo{
+    width:40px;height:40px;flex:none;border-radius:14px;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:20px;letter-spacing:-1px;
+  }
+  .brand .name{font-weight:700;font-size:16px;color:var(--text);line-height:1.15;}
+  .brand .sub{font-size:12px;color:var(--muted);line-height:1.15;}
+
+  .nav{flex:1;overflow-y:auto;padding:14px 10px;display:flex;flex-direction:column;gap:2px;}
+  .group-label{
+    font-size:11px;font-weight:700;letter-spacing:1.2px;color:var(--label);
+    text-transform:uppercase;padding:14px 10px 6px;
+  }
+  .group-label:first-child{padding-top:8px;}
+  .channel{
+    display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:8px;
+    text-decoration:none;color:var(--body);font-size:15px;cursor:pointer;
+    border:none;background:none;width:100%;text-align:left;font-family:inherit;position:relative;
+  }
+  .channel .hash{color:#B5BAC1;font-weight:700;}
+  .channel .ico{font-size:15px;line-height:1;width:18px;text-align:center;}
+  .channel:hover{background:var(--hover);color:var(--text);}
+  .channel:hover .hash{color:#9A9DA5;}
+  .channel.active{background:var(--tint);color:var(--accent-deep);font-weight:600;}
+  .channel.active .hash{color:#A9B0F2;}
+  .channel.active::before{
+    content:"";position:absolute;left:-10px;top:8px;bottom:8px;width:4px;
+    border-radius:0 4px 4px 0;background:var(--accent);
+  }
+
+  .me{
+    display:flex;align-items:center;gap:10px;padding:10px 12px;margin:8px;border-radius:10px;background:var(--line-soft);
+  }
+  .me .av{
+    position:relative;flex:none;width:34px;height:34px;border-radius:50%;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;
+  }
+  .me .av .dot{position:absolute;right:-1px;bottom:-1px;width:12px;height:12px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px var(--line-soft);}
+  .me .who{font-weight:600;font-size:14px;color:var(--text);line-height:1.2;}
+  .me .meta{font-size:12px;color:var(--muted);line-height:1.2;}
+
+  /* ===== MAIN ===== */
+  .main{flex:1;min-width:0;display:flex;flex-direction:column;height:100vh;}
+
+  .toolbar{
+    display:flex;align-items:center;gap:12px;padding:14px 24px;
+    border-bottom:1px solid var(--line);flex:none;min-height:62px;
+  }
+  .toolbar .t-ico{font-size:18px;}
+  .toolbar .t-hash{color:#B5BAC1;font-weight:700;font-size:18px;}
+  .toolbar .t-name{font-weight:700;font-size:17px;color:var(--head);}
+  .toolbar .t-desc{font-size:13px;color:var(--muted);border-left:1px solid var(--line);padding-left:12px;margin-left:2px;}
+  .toolbar .spacer{flex:1;}
+  .pill{
+    display:inline-flex;align-items:center;gap:7px;padding:4px 11px;border-radius:999px;
+    font-size:12px;font-weight:600;
+  }
+  .pill.live{background:#E7F4EC;color:#2C7A47;}
+  .pill.live .d{width:8px;height:8px;border-radius:50%;background:var(--green);}
+  .pill.setup{background:#FBF1D8;color:#9A6F0C;}
+  .pill.setup .d{width:8px;height:8px;border-radius:50%;background:var(--yellow);}
+
+  .tbtn{
+    height:34px;padding:0 14px;border:1px solid #C7CAD1;border-radius:8px;background:#fff;color:var(--body);
+    font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;
+    display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+  }
+  .tbtn:hover{background:var(--hover);border-color:#B5BAC1;}
+  .tbtn.primary{background:var(--accent);border:none;color:#fff;}
+  .tbtn.primary:hover{background:var(--accent-deep);}
+
+  .stage{flex:1;min-height:0;position:relative;background:var(--bg);}
+  .frame{position:absolute;inset:0;width:100%;height:100%;border:none;background:#fff;}
+
+  .frame-hint{
+    position:absolute;left:50%;bottom:18px;transform:translateX(-50%);
+    background:#1E1F22;color:#fff;font-size:12.5px;font-weight:600;padding:8px 14px;border-radius:8px;
+    box-shadow:0 4px 14px rgba(30,31,34,.18);max-width:80%;text-align:center;
+  }
+  .frame-hint a{color:#A9B0F2;}
+
+  /* ===== HOME / WELCOME ===== */
+  .home{position:absolute;inset:0;overflow-y:auto;padding:56px 64px 80px;}
+  .home-inner{max-width:1000px;margin:0 auto;}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:999px;
+    background:var(--tint);color:var(--accent-deep);font-size:13px;font-weight:600;margin-bottom:18px;
+  }
+  .eyebrow .d{width:7px;height:7px;border-radius:50%;background:var(--accent);}
+  .home h1{font-size:40px;font-weight:800;letter-spacing:-1px;margin:0 0 14px;line-height:1.08;color:var(--head);}
+  .home .lede{font-size:17px;line-height:1.55;color:var(--muted2);max-width:680px;margin:0 0 36px;}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;}
+  .card{
+    text-align:left;border:1px solid var(--line);border-radius:16px;padding:20px;background:#fff;cursor:pointer;
+    font-family:inherit;box-shadow:0 1px 2px rgba(30,31,34,.04);transition:border-color .12s ease, box-shadow .12s ease, transform .12s ease;
+    display:flex;flex-direction:column;gap:12px;
+  }
+  .card:hover{border-color:#C7CAD1;box-shadow:0 6px 18px rgba(30,31,34,.07);transform:translateY(-1px);}
+  .card-top{display:flex;align-items:center;gap:12px;}
+  .card .c-ico{
+    width:44px;height:44px;flex:none;border-radius:14px;background:var(--tint);
+    display:flex;align-items:center;justify-content:center;font-size:20px;
+  }
+  .card .c-name{font-weight:700;font-size:16px;color:var(--text);}
+  .card .c-slug{font-size:12.5px;color:var(--muted);font-family:var(--mono);}
+  .card .c-desc{font-size:13.5px;line-height:1.5;color:var(--muted2);flex:1;}
+  .card-foot{display:flex;align-items:center;justify-content:space-between;}
+  .card .open{font-size:13px;font-weight:600;color:var(--accent);display:inline-flex;align-items:center;gap:5px;}
+
+  .home-foot{
+    border-top:1px solid var(--line);margin-top:44px;padding-top:22px;
+    font-size:13px;color:var(--label);max-width:760px;
+  }
+
+  /* ===== MOBILE ===== */
+  .menu-btn{display:none;}
+  @media (max-width:860px){
+    .app{flex-direction:column;height:auto;min-height:100vh;}
+    .sidebar{
+      width:100%;height:auto;border-right:none;border-bottom:1px solid var(--line);
+      position:sticky;top:0;z-index:20;
+    }
+    .nav{display:none;}
+    .sidebar.open .nav{display:flex;}
+    .me{display:none;}
+    .menu-btn{
+      display:inline-flex;margin-left:auto;height:36px;width:40px;border:1px solid #C7CAD1;border-radius:8px;
+      background:#fff;align-items:center;justify-content:center;font-size:18px;cursor:pointer;color:var(--body);
+    }
+    .main{height:auto;}
+    .stage{height:calc(100vh - 62px);min-height:520px;}
+    .home{position:relative;padding:32px 20px 60px;}
+    .home h1{font-size:30px;}
+    .toolbar{padding:12px 16px;}
+    .toolbar .t-desc{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="#" id="brand">
+      <div class="logo">E</div>
+      <div>
+        <div class="name">Eng Tools Vault</div>
+        <div class="sub">Engineering toolkit</div>
+      </div>
+      <button class="menu-btn" id="menuBtn" aria-label="Toggle menu" type="button">≡</button>
+    </a>
+    <nav class="nav" id="nav"><!-- channels injected by JS --></nav>
+    <div class="me">
+      <div class="av">BK<span class="dot"></span></div>
+      <div>
+        <div class="who">bijankle</div>
+        <div class="meta">v1.0 · live</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <main class="main">
+    <div class="toolbar" id="toolbar">
+      <!-- toolbar content injected by JS -->
+    </div>
+    <div class="stage" id="stage">
+      <!-- home injected by JS; iframe created on demand -->
+    </div>
+  </main>
+</div>
+
+<script>
+/* ============================================================
+   App registry — add a new tool by adding one entry here.
+   pages: the GitHub Pages URL (https://bijankle.github.io/<Repo>/)
+   ============================================================ */
+const OWNER = "bijankle";
+const APPS = [
+  {
+    slug:"pump-curve", repo:"Pump-Curve", name:"Pump Curve", ico:"📈",
+    group:"Pumps & Hydraulics",
+    desc:"Plot and read pump performance curves.",
+  },
+  {
+    slug:"slurry-pump-calc", repo:"Slurry-Pump-Calc", name:"Slurry Pump Calc", ico:"🧮",
+    group:"Pumps & Hydraulics",
+    desc:"Build company-standard slurry pump calcs with working formulas and summary tables.",
+  },
+  {
+    slug:"pipe-router", repo:"Pipe-Router", name:"Pipe Router", ico:"🧭",
+    group:"Pumps & Hydraulics",
+    desc:"Route and size pipe runs.",
+  },
+  {
+    slug:"pid-checker", repo:"PID-Checker", name:"P&ID Checker", ico:"📐",
+    group:"Drawings & P&ID",
+    desc:"Check a P&ID PDF against mechanical and piping lists.",
+  },
+  {
+    slug:"photo-map", repo:"Photo-Map", name:"Photo Map", ico:"🗺️",
+    group:"Drawings & P&ID",
+    desc:"Place site photos on a map.",
+  },
+  {
+    slug:"pdf-canvas", repo:"PDF-Canvas", name:"PDF Canvas", ico:"📄",
+    group:"Documents & Data",
+    desc:"Mark up and work over PDF drawings on a canvas.",
+  },
+  {
+    slug:"data-extractor", repo:"Data-Extractor", name:"Data Extractor", ico:"🪣",
+    group:"Documents & Data",
+    desc:"Extract specific text and images into pre-set buckets.",
+  },
+  {
+    slug:"doc-compare", repo:"Doc-Compare", name:"Doc Compare", ico:"🔍",
+    group:"Documents & Data",
+    desc:"Compare two documents and highlight the differences.",
+  },
+];
+APPS.forEach(a => a.pages = `https://${OWNER}.github.io/${a.repo}/`);
+APPS.forEach(a => a.repoUrl = `https://github.com/${OWNER}/${a.repo}`);
+const BY_SLUG = Object.fromEntries(APPS.map(a => [a.slug, a]));
+
+/* ---------- Sidebar ---------- */
+const navEl = document.getElementById("nav");
+function buildNav(){
+  const groups = [];
+  const seen = {};
+  APPS.forEach(a => { if(!seen[a.group]){seen[a.group]=[];groups.push(a.group);} seen[a.group].push(a); });
+  navEl.innerHTML = "";
+  groups.forEach(g => {
+    const label = document.createElement("div");
+    label.className = "group-label";
+    label.textContent = g;
+    navEl.appendChild(label);
+    seen[g].forEach(a => {
+      const link = document.createElement("a");
+      link.className = "channel";
+      link.href = "#" + a.slug;
+      link.dataset.slug = a.slug;
+      link.innerHTML = `<span class="ico">${a.ico}</span><span class="hash">#</span>${a.slug}`;
+      navEl.appendChild(link);
+    });
+  });
+}
+
+/* ---------- Toolbar ---------- */
+const toolbar = document.getElementById("toolbar");
+function renderToolbar(app){
+  if(!app){
+    toolbar.innerHTML = `
+      <span class="t-ico">🗂️</span>
+      <span class="t-name">Home</span>
+      <span class="t-desc">Pick a tool from the sidebar to open it here.</span>`;
+    return;
+  }
+  toolbar.innerHTML = `
+    <span class="t-ico">${app.ico}</span>
+    <span class="t-hash">#</span>
+    <span class="t-name">${app.name}</span>
+    <span class="t-desc">${app.desc}</span>
+    <span class="spacer"></span>
+    <span class="pill live"><span class="d"></span>Live</span>
+    <a class="tbtn" href="${app.repoUrl}" target="_blank" rel="noopener">Repo ↗</a>
+    <a class="tbtn primary" href="${app.pages}" target="_blank" rel="noopener">Open full ↗</a>`;
+}
+
+/* ---------- Stage ---------- */
+const stage = document.getElementById("stage");
+function renderHome(){
+  stage.innerHTML = "";
+  const home = document.createElement("div");
+  home.className = "home";
+  const cards = APPS.map(a => `
+    <button class="card" data-slug="${a.slug}">
+      <div class="card-top">
+        <div class="c-ico">${a.ico}</div>
+        <div>
+          <div class="c-name">${a.name}</div>
+          <div class="c-slug">#${a.slug}</div>
+        </div>
+      </div>
+      <div class="c-desc">${a.desc}</div>
+      <div class="card-foot">
+        <span class="open">Open ↗</span>
+      </div>
+    </button>`).join("");
+  home.innerHTML = `
+    <div class="home-inner">
+      <div class="eyebrow"><span class="d"></span>Engineering toolkit</div>
+      <h1>One vault, every tool.</h1>
+      <p class="lede">A single home for your engineering apps. Each tool lives in its own GitHub repo and updates the moment you push to its <strong>main</strong> branch — pick one below to open it right here, no tab-juggling.</p>
+      <div class="grid">${cards}</div>
+      <div class="home-foot">Eng Tools Vault · ${APPS.length} tools · Blurprint theme, tuned for white backgrounds.</div>
+    </div>`;
+  stage.appendChild(home);
+  home.querySelectorAll(".card").forEach(c =>
+    c.addEventListener("click", () => { location.hash = "#" + c.dataset.slug; }));
+}
+
+function renderApp(app){
+  stage.innerHTML = "";
+  const frame = document.createElement("iframe");
+  frame.className = "frame";
+  frame.src = app.pages;
+  frame.title = app.name;
+  frame.loading = "eager";
+  stage.appendChild(frame);
+  const hint = document.createElement("div");
+  hint.className = "frame-hint";
+  hint.innerHTML = `Blank screen? Enable GitHub Pages for <strong>${app.repo}</strong>, or <a href="${app.pages}" target="_blank" rel="noopener">open it directly ↗</a>.`;
+  stage.appendChild(hint);
+  // Hide the hint once the frame loads something successfully.
+  frame.addEventListener("load", () => { hint.style.display = "none"; });
+}
+
+/* ---------- Routing ---------- */
+function setActive(slug){
+  document.querySelectorAll(".channel").forEach(c =>
+    c.classList.toggle("active", c.dataset.slug === slug));
+}
+function route(){
+  const slug = location.hash.replace(/^#/, "");
+  const app = BY_SLUG[slug];
+  if(app){
+    setActive(slug);
+    renderToolbar(app);
+    renderApp(app);
+    document.title = app.name + " · Eng Tools Vault";
+  } else {
+    setActive(null);
+    renderToolbar(null);
+    renderHome();
+    document.title = "Eng Tools Vault";
+  }
+  document.getElementById("sidebar").classList.remove("open");
+}
+
+buildNav();
+window.addEventListener("hashchange", route);
+route();
+
+/* ---------- Mobile menu ---------- */
+document.getElementById("menuBtn").addEventListener("click", (e) => {
+  e.preventDefault();
+  document.getElementById("sidebar").classList.toggle("open");
+});
+</script>
+</body>
+</html>
